@@ -3,6 +3,9 @@
 #include "die.h"
 #include "roll.h"
 #include "shooter.h"
+#include "phase.h"
+#include "come_out_phase.h"
+#include "point_phase.h"
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
@@ -51,6 +54,64 @@ TEST_CASE ("Verify shooter returns a roll and that roll has 2-12") {
 
 		delete roll;
 
+	}
+
+}
+
+TEST_CASE ("ComeOutPhase outcome TEST") {
+	Die die1;
+	Die die2;
+	Roll roll(die1, die2);
+	ComeOutPhase comeOutPhase;
+
+	roll.roll_dice();
+	int roll_value = roll.roll_value();
+	if (roll_value == 7 || roll_value == 11)
+	{
+		REQUIRE(comeOutPhase.get_outcome(&roll) == RollOutcome::natural);
+	}
+
+	roll.roll_dice();
+	roll_value = roll.roll_value();
+	if (roll_value == 2 || roll_value == 3 || roll_value == 12)
+	{
+		REQUIRE(comeOutPhase.get_outcome(&roll) == RollOutcome::craps);
+	}
+
+	roll.roll_dice();
+	roll_value = roll.roll_value();
+	if (roll_value != 7 && roll_value != 11 && roll_value != 2 && roll_value != 3 && roll_value != 12)
+	{
+		REQUIRE(comeOutPhase.get_outcome(&roll) == RollOutcome::point);
+	}
+
+}
+
+TEST_CASE ("PointPhase outcome TEST") {
+	Die die1;
+	Die die2;
+	Roll roll(die1, die2);
+
+	roll.roll_dice();
+	int point_value = roll.roll_value();
+	PointPhase pointPhase(point_value);
+
+	roll.roll_dice();
+	if (roll.roll_value() == point_value)
+	{
+		REQUIRE(pointPhase.get_outcome(&roll) == RollOutcome::point);
+	}
+
+	roll.roll_dice();
+	if (roll.roll_value() == 7)
+	{
+		REQUIRE(pointPhase.get_outcome(&roll) == RollOutcome::seven_out);
+	}
+
+	roll.roll_dice();
+	if (roll.roll_value() != point_value && roll.roll_value() != 7)
+	{
+		REQUIRE(pointPhase.get_outcome(&roll) == RollOutcome::nopoint);
 	}
 
 }
