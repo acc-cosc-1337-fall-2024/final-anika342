@@ -105,20 +105,22 @@ TEST_CASE ("PointPhase outcome TEST") {
 
 
 TEST_CASE ("Verify shooter returns a roll with value from 2 to 12") {
+	Shooter shooter;
 	Die die1;
 	Die die2;
 	//Roll roll(die1, die2);
-	Shooter shooter;
+	
 
 	for (int i=0; i<10; ++i)
 	{
-		Roll* roll = shooter.throw_dice(die1,die2);
-		int roll_value = roll->roll_value();
+		//Roll* roll = shooter.throw_dice(die1,die2);
+		//int roll_value = roll->roll_value();
+		auto roll_value = shooter.throw_dice(die1,die2)->roll_value();
 
 		REQUIRE (roll_value >= 2);
 		REQUIRE (roll_value <= 12);
 
-		delete roll;
+		//delete roll;
 
 	}
 
